@@ -1,0 +1,1 @@
+CREATE TABLE if not EXISTS monopatines( id integer primary key autoincrement, marca varchar(60) NOT NULL unique, precio REAL NOT NULL, cantidad int NOT NULL DEFAULT 0,disponibles int default 0)
