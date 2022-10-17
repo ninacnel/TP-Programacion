@@ -16,9 +16,8 @@ class ProgramaPrincipal:
             print("4 - Cargar disponibilidad")
             print("5 - Listado de productos")
             print("6 - Tabla")
-            print("7 - Tabla de precios=?=?=?")
-            print("8 - Registros anteriores a una fecha en especifico de la tabla monopatin")
-            print("9 - Primera y unica vez")
+            print("7 - Tabla de precios historicos")
+            print("8 - Registros anteriores")
             print("0 - Salir")
             opcion = int(input("Ingrese una opcion: "))
             if opcion >= 0 and opcion <= 9:
@@ -162,19 +161,25 @@ class Monopatin:
     def tabla_historico_precios(self):
         conexion = Conexiones()
         conexion.abrirConexion()
-        conexion.miCursor.execute("CREATE TABLE historic_price AS SELECT * FROM monopatines")
-        conexion.miCursor.execute("SELECT id, precio FROM monopatines")
-        listMon = conexion.miCursor.fetchall()
-        for item in listMon:
-            precio = int(item[1]) + int(int(item[1]) * 0.23)
-            conexion.miCursor.execute(f"UPDATE tablaname SET precio={precio} fechaUltimoPrecio={'16/10/2022'} WHERE id={id}")
-        conexion.cerrarConexion()
+        try:
+            conexion.miCursor.execute("CREATE TABLE historic_price AS SELECT * FROM monopatines")
+            conexion.miCursor.execute("SELECT id, precio FROM monopatines")
+            listMon = conexion.miCursor.fetchall()
+            for item in listMon:
+                precio = int(item[1]) + int(int(item[1]) * 0.23)
+                conexion.miCursor.execute(f"UPDATE tablaname SET precio={precio} fechaUltimoPrecio={'16/10/2022'} WHERE id={id}")
+                conexion.miConexion.commit()
+        finally:
+            conexion.cerrarConexion()
     
     def fechas_anteriores(self):
         conexion = Conexiones()
         conexion.abrirConexion()
-        conexion.miCursor.execute("SELECT * FROM monopatin where fechaUltimoPrecio <= fechaElegida")
-        conexion.cerrarConexion
+        try:
+            conexion.miCursor.execute("SELECT * FROM monopatin where fechaUltimoPrecio <= fechaElegida")
+            conexion.miConexion.commit()
+        finally:
+            conexion.cerrarConexion
 
 menu = ProgramaPrincipal()
 menu.crearTablas()
