@@ -4,67 +4,64 @@ import datetime
 
 # la clase principal del programa
 class programa():
-    #Metodo menú,que llama funciones externas para poder realizar las diferentes órdenes.
     def menu(self):
         while True:
-            #Opciones que nos brinda el menú.
             print("\nMenú de opciones:\n")
-            print("1-Cargar monopatín.")
-            print("2-Modificar un precio.")
-            print("3-Borrar un registro.")
-            print("4-Cargar disponibilidad.")
-            print("5-Listar productos.")
-            print("6-Crear nueva tabla personalizada. Ingresar registros a la tabla.")
-            print("7-Aumentar precio.")
-            print("8-Mostrar todos los registros.")
-            print("0-Salir del programa.")
-            #Carga de la variable "opcion", que nos permite actuar como el operador para la estructura SWITCH/CASE(creada por Ifs).
+            print("1-Cargar monopatines")
+            print("2-Modificar datos")
+            print("3-Borrar un monopatín")
+            print("4-Cargar disponibilidad")
+            print("5-Listado de productos")
+            print("6-Crear nueva tabla. Ingresar monopatín")
+            print("7-Actualizar precio")
+            print("8-Mostrar registros hasta fecha indicada")
+            print("0-Salir del programa")
             opcion = int(input("\nIngrese una opción:\n"))                
 
-            if opcion == 1: #Opción 1- Cargamos 3 variables y las pasamos como parámetros en la función para cargar un registro completo para la tabla "Monopatines", en nuestra base de datos.
-                marca = str(input("Inserte el nombre de la marca:"))
-                precio = float(input("Inserte el precio del producto:"))
-                cantidad = int(input("Inserte la cantidad en stock del producto:"))
-                insertarRegistro(marca,precio,cantidad)
+            if opcion == 1: # pide los datos para luego guardarlos en las columnas correspondientes de la tabla "Monopatines"
+                marca = str(input("Ingrese marca: "))
+                precio = float(input("Ingrese precio: "))
+                cantidad = int(input("Ingrese stock del producto: "))
+                cargarMonopatines(marca,precio,cantidad)
 
-            elif opcion == 2: #Opción 2- Solicitamos un Id como variable y un nuevo precio. Comparamos el Id con el que se encuentra en la base de Datos.Si se encuentra, reemplaza el precio anterior por el nuevo.
-                nuevoId = int(input("Ingrese el id del producto que desea modificar:\n"))
-                nuevoPrecio = float(input("Ingrese el nuevo valor del producto seleccionado:\n"))
+            elif opcion == 2: # pide el id para actualizar el precio del monopatín
+                nuevoId = int(input("Ingrese el código del monopatín que desea modificar: "))
+                nuevoPrecio = float(input("Ingrese el nuevo precio: "))
                 actualizarPrecio(nuevoPrecio, nuevoId)
 
-            elif opcion == 3: #Opción 3- Borra un registro en base a un Id que le pasamos por consola.
-                nuevoId = int(input("Ingrese el id del producto que desea borrar:\n"))
+            elif opcion == 3: # pide el id de un monopatín para eliminarlo
+                nuevoId = int(input("Ingrese el código del monopatín que desea eliminar: "))
                 borrarMonopatin(nuevoId)
 
-            elif opcion == 4: #Opción 4- Pasamos por consola una variable con la marca, si hay una parecida o igual en la BD, aumentamos el stock en 1.
-                nombreMarca = str(input("Ingrese el nombre de la marca a la que desa aumentar el stock:"))
+            elif opcion == 4: # pide la marca y aumenta en 1 unidad la cantidad de ese producto
+                nombreMarca = str(input("Ingrese la marca del monopatín a aumentar stock: "))
                 cargarDisponibilidad(nombreMarca)
 
-            elif opcion == 5: #Opción 5- Permite visualizar una de las tres tablas creadas. Es necesario escribir el nombre de la tabla para que se muetren en pantalla.
+            elif opcion == 5: # muestra la información guardada en la tabla "Monopatín"
                 leerTablaMonopatines()
 
-            elif opcion == 6: #Opción 6- Crea un con nuevas columnas para una nueva tabla llamada "Monopatin".
-                print("Ingrese los datos de un producto a la nueva tabla.")
-                modelo = str(input("Ingrese el modelo:"))
-                marca = str(input("Ingrese la marca:"))
-                potencia = str(input("Ingrese la potencia:"))
-                precio = int(input("Ingrese el precio:"))
-                color = str(input("Ingrese el color:"))
-                anio = int(input("Ingrese el año de ingreso del producto:"))
-                mes = int(input("Ingrese el mes de ingreso del producto:"))
-                dia = int(input("Ingrese el día de ingreso del producto:"))
+            elif opcion == 6: # crea una nueva tabla llamada "Monopatin" y pide los datos correspondientes
+                print("Ingrese los datos del monopatín para la nueva tabla")
+                modelo = str(input("Ingrese modelo: "))
+                marca = str(input("Ingrese marca: "))
+                potencia = str(input("Ingrese potencia: "))
+                precio = int(input("Ingrese precio: "))
+                color = str(input("Ingrese color: "))
+                anio = int(input("ESPECIFIQUE\nAÑO de ingreso del producto: "))
+                mes = int(input("MES de ingreso del producto: "))
+                dia = int(input("DÍA de ingreso del producto: "))
                 fechaUltimoPrecio = datetime.datetime(anio, mes, dia)
                 cargarRegistroNuevaTabla(modelo,marca,potencia,precio,color,fechaUltimoPrecio)
 
-            elif opcion == 7: # Opción 7- Inserta los datos de "nuevaTabla" en la tabla "historicoPrecio", y luego aumenta un %23 el precio
-                clonarTabla() 
+            elif opcion == 7: # copia los datos de "nuevaTabla" en la tabla "historicoPrecio", y luego aumenta un %23 el precio
+                copiarTabla() 
                 actualizarDolar() 
             
-            elif opcion == 8: # Opción 8- Creamos variables para año, mes y día, que luego utilizamos para pasar como parámetro de tipo fecha en la función. Nos muestra los registros que tengan una fecha anterior a la que fue pasada como parámetro.
-            #LA OPCIÓN Nº8 REQUIERE DE FORMA OBLIGATORIA HABER UTILIZADO LA OPCIÓN Nº7.DE LO CONTRARIO NOS MOSTRARÁ UNA LISTA VACÍA.
-                anio = int(input("Ingrese el año de ingreso del producto:"))
-                mes = int(input("Ingrese el mes de ingreso del producto:"))
-                dia = int(input("Ingrese el día de ingreso del producto:"))
+            elif opcion == 8: # pide por consola año, mes y dia para buscar los registros anteriores o con la misma fecha
+                print("Para ver los registros anteriores a la fecha, ESPECIFIQUE:")
+                anio = int(input("AÑO de ingreso del producto: "))
+                mes = int(input("MES de ingreso del producto: "))
+                dia = int(input("DÍA de ingreso del producto: "))
                 fecha = datetime.datetime(anio, mes, dia)
                 filtrarPorFecha(fecha)
 
@@ -74,19 +71,19 @@ class programa():
 
  # método para crear la tabla "Monopatines" con cuatro columnas
 def crearTabla():
-        conexion = Conexiones()
-        conexion.abrirConexion()
-        conexion.miCursor.execute("DROP TABLE IF EXISTS Monopatines")
-        conexion.miCursor.execute(
-            """CREATE TABLE Monopatines (
-            id INTEGER NOT NULL PRIMARY KEY,
-            marca text UNIQUE,
-            precio integer,
-            cantidad integer
-            )"""
-        )
-        conexion.miConexion.commit()
-        conexion.cerrarConexion()
+    conexion = Conexiones()
+    conexion.abrirConexion()
+    conexion.miCursor.execute("DROP TABLE IF EXISTS Monopatines")
+    conexion.miCursor.execute(
+        """CREATE TABLE Monopatines (
+        id INTEGER NOT NULL PRIMARY KEY,
+        marca text UNIQUE,
+        precio integer,
+        cantidad integer
+        )"""
+    )
+    conexion.miConexion.commit()
+    conexion.cerrarConexion()
 
 # método para crear la nueva tabla "Monopatin"        
 def nuevaTabla(): 
@@ -124,129 +121,138 @@ def historicoPrecio():
     conexion.miConexion.commit()
     conexion.cerrarConexion()
 
-def insertarRegistro(marca, precio, cantidad): #Inserta los datos de cada uno de los parámetros en una columna específica de la tabla "Monopatines".
+# método para cargar datos en la tabla "Monopatines"
+def cargarMonopatines(marca, precio, cantidad): 
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO Monopatines (marca,precio,cantidad) VALUES ('{marca}' , {precio} , {cantidad})"
-        cursor.execute(instruccion)
-        conn.commit()
-        print("¡¡¡\nMonopatín cargado existosamente.\n!!!")
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("¡¡¡\nMonopatín cargado existosamente\n!!!")
     except:
         print("ERROR al cargar monopatin")
     finally:        
-        conn.close()
+        conexion.close()
 
+# método que muestra el contenido de la tabla "Monopatines"
 def leerTablaMonopatines():
     conexion = Conexiones()
     conexion.abrirConexion()
     try:
         conexion.miCursor.execute("SELECT * FROM Monopatines")
         datos = conexion.miCursor.fetchall()
-        print("\ncodigo\t marca\tprecio\tcantidad")
+        print("\nLista de monopatines disponibles\ncódigo\t marca\t precio\tcantidad")
         for dato in datos:
                 id,marca,precio,cantidad = dato
                 print(str(id),"\t",str(marca),"\t",str(precio),"\t",str(cantidad))
     except:
-        print("Error al querer mostrar listado")
+        print("ERROR al querer mostrar listado")
     finally:
         conexion.cerrarConexion()
 
-def actualizarPrecio(nuevoPrecio,nuevoId): #Si encuentra una similitud de ID, nos permite modificar el precio de un producto en el regisro que posee ese ID.
+# método para modificar el precio según el id
+def actualizarPrecio(nuevoPrecio,nuevoId): 
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"UPDATE Monopatines SET precio={nuevoPrecio} WHERE id={nuevoId}"
-        cursor.execute(instruccion)
-        conn.commit()
-        print("Precio actualizado exitosamente.")
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("¡¡¡\nPrecio actualizado exitosamente\n!!!")
     except:
         print("ERROR al actualizar precio.")
     finally:
-        conn.close()
+        conexion.close()
 
-def borrarMonopatin(nuevoId): #Borra un registro en particular de la tabla selecionada.
+# método para eliminar un monopatín según el id
+def borrarMonopatin(nuevoId):
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruction= f"DELETE from Monopatines where id={nuevoId}"
-        cursor.execute(instruction)
-        conn.commit()
-        print("Monopatín eliminado exitosamente.")
+        miCursor.execute(instruction)
+        conexion.commit()
+        print("¡¡¡\nMonopatín eliminado exitosamente\n!!!")
     except:
         print("ERROR al borrar monopatin.")
     finally:
-        conn.close()
+        conexion.close()
         
-
-def cargarDisponibilidad(nombreMarca): #Incrementa la cantidad del stock en 1 del monopatín que pasemos la "marca" por consola.
+# método para incrementar la cantidad disponible de un monopatín según la marca
+def cargarDisponibilidad(nombreMarca): 
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"UPDATE Monopatines SET cantidad=cantidad+1 WHERE marca like '{nombreMarca}'"
-        cursor.execute(instruccion)
-        conn.commit()
-        print("¡¡¡\nDisponibilidad cargada exitosamente.\n!!!")
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("¡¡¡\nDisponibilidad cargada exitosamente\n!!!")
     except:
         print("ERROR al cargar unidad.")
     finally:
-        conn.close()
+        conexion.close()
 
-def cargarRegistroNuevaTabla(modelo,marca,potencia,precio,color,fechaUltimoPrecio): #Crea un registro y almacena los datos de los parámetros en la columna correspondiente.
+# método para cargar datos en "nuevaTabla"
+def cargarRegistroNuevaTabla(modelo,marca,potencia,precio,color,fechaUltimoPrecio):
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO Monopatin (modelo,marca,potencia,precio,color,fechaUltimoPrecio) VALUES ('{modelo}', '{marca}' , '{potencia}' , {precio} , '{color}' , '{fechaUltimoPrecio}')"
-        cursor.execute(instruccion)
-        conn.commit()
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("¡¡¡\nMonopatín cargado a nueva tabla exitosamente\n!!!")
     except:
         print("ERROR al cargar nuevo monopatin.")
     finally:
-        conn.close()
+        conexion.close()
 
-def clonarTabla(): #Clona todas las columnas de la tabla "Monopatin" y crea una nueva tabla con dichas columnas.
+# método para copiar los todos(*) elementos de una "nuevaTabla" en "historicoPrecio"
+def copiarTabla(): 
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO historicoPrecio SELECT * FROM Monopatin"
-        cursor.execute(instruccion)
-        conn.commit()
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("Nueva Tabla creada exitosamente !!!")
     except:
-        print("ERROR al clonar tablas.")
+        print("ERROR al copiar tabla.")
     finally:
-        conn.close()
+        conexion.close()
 
-def actualizarDolar(): #Actualiza el precio incrementándolo en 0.23% del total anterior.
+# método para aumentar un %23 el precio de un monopatín
+def actualizarDolar(): 
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"UPDATE historicoPrecio SET precio=precio*1.23"
-        cursor.execute(instruccion)
-        conn.commit()
-        print("¡¡¡\nPrecios actualizados exitosamente.\n!!!")
+        miCursor.execute(instruccion)
+        conexion.commit()
+        print("¡¡¡\nPrecios actualizados exitosamente\n!!!")
     except:
         print("ERROR al actualizar precios.")
     finally:
-        conn.close()
-
-def filtrarPorFecha(fecha): #Hace una comparación de fechas y nos muestra los registro que posean una fecha anterior.
+        conexion.close()
+        
+# método que muestra los registros anteriores o de la misma fecha ingresada
+def filtrarPorFecha(fecha):
     try:
-        conn = sql.connect("Monopatines")
-        cursor = conn.cursor()
+        conexion = sql.connect("Monopatines")
+        miCursor = conexion.cursor()
         instruccion = f"SELECT * FROM historicoPrecio WHERE fechaUltimoPrecio <= '{fecha}'"
-        cursor.execute(instruccion)
-        datos = cursor.fetchall()
-        conn.commit()
-        print("\ncodigo\t modelo\t marca\t potencia\tprecio\t color\t fecha")
+        miCursor.execute(instruccion)
+        datos = miCursor.fetchall()
+        conexion.commit()
+        print("\nTabla registro monopatines\ncódigo\t modelo\t marca\t potencia\tprecio\t color\t fecha")
         for dato in datos:
                 id_mono,modelo,marca,potencia,precio,color,fechaUltimoPrecio = dato
                 print(str(id_mono),"\t",str(modelo),"\t",str(marca),"\t",str(potencia),"\t",str(precio),"\t",str(color),"\t",(fechaUltimoPrecio))
     except:
         print("ERROR al filtrar por fechas.")
     finally:
-        conn.close()
-        
-        
+        conexion.close()
+              
 # clase para las conexiones con la base de datos
 class Conexiones:
     def abrirConexion(self):
@@ -256,10 +262,10 @@ class Conexiones:
     def cerrarConexion(self):
         self.miConexion.close()
 
-Ejecutar = programa()
 # creamos la tabla "Monopatines", la tabla "Monopatin" y a su vez la tabla "historicoPrecio"
 crearTabla()
 nuevaTabla()
 historicoPrecio()
-# ejecutamos el método "menu" de la clase "programa" a través del objeto "Ejecutar"
-Ejecutar.menu()
+# ejecutamos el método "menu" de la clase "programa" mediante el objeto "prueba"
+prueba = programa()
+prueba.menu()
