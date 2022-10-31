@@ -27,7 +27,7 @@ class programa():
             elif opcion == 2: # pide el id para actualizar el precio del monopatín
                 nuevoId = int(input("Ingrese el código del monopatín que desea modificar: "))
                 nuevoPrecio = float(input("Ingrese el nuevo precio: "))
-                actualizarPrecio(nuevoPrecio, nuevoId)
+                actualizarPrecio(nuevoPrecio,nuevoId)
 
             elif opcion == 3: # pide el id de un monopatín para eliminarlo
                 nuevoId = int(input("Ingrese el código del monopatín que desea eliminar: "))
@@ -69,7 +69,7 @@ class programa():
                 print("Fin del programa.")
                 break
 
- # método para crear la tabla "Monopatines" con cuatro columnas
+# método para crear la tabla "Monopatines" con cuatro columnas
 def crearTabla():
     conexion = Conexiones()
     conexion.abrirConexion()
@@ -92,7 +92,7 @@ def nuevaTabla():
     conexion.miCursor.execute("DROP TABLE IF EXISTS Monopatin")
     conexion.miCursor.execute(
             """CREATE TABLE Monopatin (
-            id_mono integer NOT NULL PRIMARY KEY,
+            id_mono INTEGER NOT NULL PRIMARY KEY,
             modelo varchar(30),
             marca varchar(30),
             potencia varchar(30),
@@ -108,24 +108,15 @@ def historicoPrecio():
     conexion = Conexiones()
     conexion.abrirConexion()
     conexion.miCursor.execute("DROP TABLE IF EXISTS historicoPrecio")
-    conexion.miCursor.execute(
-            """CREATE TABLE historicoPrecio (
-            id_mono integer NOT NULL PRIMARY KEY,
-            modelo varchar(30),
-            marca varchar(30),
-            potencia varchar(30),
-            precio integer,
-            color varchar(30),
-            fechaUltimoPrecio datetime
-            )""")
+    conexion.miCursor.execute("""CREATE TABLE historicoPrecio AS SELECT * FROM Monopatin""")
     conexion.miConexion.commit()
     conexion.cerrarConexion()
 
 # método para cargar datos en la tabla "Monopatines"
 def cargarMonopatines(marca, precio, cantidad): 
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO Monopatines (marca,precio,cantidad) VALUES ('{marca}' , {precio} , {cantidad})"
         miCursor.execute(instruccion)
         conexion.commit()
@@ -151,40 +142,46 @@ def leerTablaMonopatines():
     finally:
         conexion.cerrarConexion()
 
-# método para modificar el precio según el id
-def actualizarPrecio(nuevoPrecio,nuevoId): 
+def actualizarPrecio(nuevoPrecio,nuevoId):
+    conexion = sql.connect("Monopatines.db")
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
-        instruccion = f"UPDATE Monopatines SET precio={nuevoPrecio} WHERE id={nuevoId}"
-        miCursor.execute(instruccion)
+        array = conexion.cursor().execute(f"SELECT * FROM Monopatines WHERE id={nuevoId}").fetchone()
+        if array == None:
+            print("ERROR al actualizar precio.")
+            print("No existe ese ID")
+        else:
+            conexion.cursor().execute(f"UPDATE Monopatines SET precio={nuevoPrecio} WHERE id={nuevoId}")
+            print("")
+            print("Precio actualizado exitosamente\n") 
+            print("")
         conexion.commit()
-        print("¡¡¡\nPrecio actualizado exitosamente\n!!!")
-    except:
-        print("ERROR al actualizar precio.")
+    except Exception as err:
+      print(err)
     finally:
         conexion.close()
-
-# método para eliminar un monopatín según el id
+        
 def borrarMonopatin(nuevoId):
+    conexion = sql.connect("Monopatines.db")
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
-        instruction= f"DELETE from Monopatines where id={nuevoId}"
-        miCursor.execute(instruction)
+        array = conexion.cursor().execute(f"SELECT * FROM Monopatines where id={nuevoId}").fetchone()
+        if array == None:
+            print("Error al borrar el monopatin")
+            print("No existe ese ID")
+        else:
+            conexion.cursor().execute(f"DELETE FROM Monopatines where id={nuevoId}")
+            print("¡¡¡\nMonopatín eliminado exitosamente\n!!!")
         conexion.commit()
-        print("¡¡¡\nMonopatín eliminado exitosamente\n!!!")
-    except:
-        print("ERROR al borrar monopatin.")
+    except Exception as err:
+      print(err)
     finally:
         conexion.close()
         
 # método para incrementar la cantidad disponible de un monopatín según la marca
 def cargarDisponibilidad(nombreMarca): 
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
-        instruccion = f"UPDATE Monopatines SET cantidad=cantidad+1 WHERE marca like '{nombreMarca}'"
+        instruccion = f"UPDATE Monopatines SET cantidad=cantidad+1 WHERE marca='{nombreMarca}'"
         miCursor.execute(instruccion)
         conexion.commit()
         print("¡¡¡\nDisponibilidad cargada exitosamente\n!!!")
@@ -195,9 +192,9 @@ def cargarDisponibilidad(nombreMarca):
 
 # método para cargar datos en "nuevaTabla"
 def cargarRegistroNuevaTabla(modelo,marca,potencia,precio,color,fechaUltimoPrecio):
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO Monopatin (modelo,marca,potencia,precio,color,fechaUltimoPrecio) VALUES ('{modelo}', '{marca}' , '{potencia}' , {precio} , '{color}' , '{fechaUltimoPrecio}')"
         miCursor.execute(instruccion)
         conexion.commit()
@@ -209,24 +206,24 @@ def cargarRegistroNuevaTabla(modelo,marca,potencia,precio,color,fechaUltimoPreci
 
 # método para copiar los todos(*) elementos de una "nuevaTabla" en "historicoPrecio"
 def copiarTabla(): 
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
         instruccion = f"INSERT INTO historicoPrecio SELECT * FROM Monopatin"
         miCursor.execute(instruccion)
         conexion.commit()
         print("Nueva Tabla creada exitosamente !!!")
     except:
-        print("ERROR al copiar tabla.")
+        print("ERROR al clonar tabla.")
     finally:
         conexion.close()
 
 # método para aumentar un %23 el precio de un monopatín
-def actualizarDolar(): 
+def actualizarDolar():
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
-        instruccion = f"UPDATE historicoPrecio SET precio=precio*1.23"
+        instruccion = f"UPDATE historicoPrecio SET precio=precio*1.23" # que actualice monopatin
         miCursor.execute(instruccion)
         conexion.commit()
         print("¡¡¡\nPrecios actualizados exitosamente\n!!!")
@@ -237,9 +234,9 @@ def actualizarDolar():
         
 # método que muestra los registros anteriores o de la misma fecha ingresada
 def filtrarPorFecha(fecha):
+    conexion = sql.connect("Monopatines.db")
+    miCursor = conexion.cursor()
     try:
-        conexion = sql.connect("Monopatines")
-        miCursor = conexion.cursor()
         instruccion = f"SELECT * FROM historicoPrecio WHERE fechaUltimoPrecio <= '{fecha}'"
         miCursor.execute(instruccion)
         datos = miCursor.fetchall()
@@ -256,7 +253,7 @@ def filtrarPorFecha(fecha):
 # clase para las conexiones con la base de datos
 class Conexiones:
     def abrirConexion(self):
-        self.miConexion = sql.connect("Monopatines")
+        self.miConexion = sql.connect("Monopatines.db") # .db
         self.miCursor = self.miConexion.cursor()
         
     def cerrarConexion(self):
